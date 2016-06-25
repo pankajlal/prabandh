@@ -7,3 +7,4 @@ import json
 @csrf_exempt
 def odk_receive(request):
     print (request.body)
+    return HttpResponse()
