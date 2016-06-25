@@ -6,4 +6,4 @@ from django.http import HttpResponse
 import json
 @csrf_exempt
 def odk_receive(request):
-    print request.body
+    print (request.body)
