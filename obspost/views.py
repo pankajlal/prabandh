@@ -65,7 +65,7 @@ def odk_receive(request):
             dbx.files_download_to_file("./" + upload_location, upload_location)
         except ApiError:
             pass
-        with open(download_location, "a") as f:
+        with open(download_location, "a+") as f:
             f.write("Submitted By: " + data["submitter"] + " at: " + data["starttime"] + " : " + data["observations"] + "\n")
         with open(download_location, "r") as f:
             dbx.files_upload(f.read(), upload_location, mode=WriteMode("overwrite"))
