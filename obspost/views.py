@@ -35,6 +35,7 @@ DROPBOX_ACCESS_TOKEN = 'INf6UK08gzAAAAAAAAAAB3la9RwEaDqEf9Uh3AgSU3e9oZzw_v8NMgJV
 FILE_BASE_PATH = ""
 import json
 import dropbox
+import requests
 
 from obspost.models import Observation
 
@@ -55,9 +56,9 @@ def odk_receive(request):
         if data["picture"] != '':
             filename = data["picture"]["filename"]
             upload_location = "/" + child + "/" + filename
-            dbx.files_upload(data["picture"]["bytes"], upload_location)
+            dbx.files_save_url(upload_location, data["picture"]["url"])
 
-        upload_location = "/" + child + "/observations.txt"
-        dbx.files_upload("Submitted By: " + data["submitter"] + " at: " + data["starttime"] + " : " + data["observations"],upload_location, mode="add")
-
+        #upload_location = "/" + child + "/observations.txt"
+        #dbx.files_upload("Submitted By: " + data["submitter"] + " at: " + data["starttime"] + " : " + data["observations"],upload_location, mode=dropbox.files.WriteMode)
+        #dbx.file
     return HttpResponse()
