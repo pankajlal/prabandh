@@ -41,7 +41,8 @@ from obspost.models import Observation
 @csrf_exempt
 def odk_receive(request):
     odk_data = json.loads(request.body.decode('utf-8'))
-
+    with open('data.txt', 'w') as outfile:
+        json.dump(odk_data, outfile)
     if odk_data["formId"] != FORM_ID:
         #Just ignore the request as we can handle only the very specific form for observation as of now.
         #Later we can build some capability to handle multiple types of forms here.
