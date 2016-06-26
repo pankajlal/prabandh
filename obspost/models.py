@@ -10,7 +10,7 @@ SUBMITTER = (('parent', 'parent'),
              ('expert', 'expert'),
              ('child', 'child')
              )
-class observation(models.Model):
+class Observation(models.Model):
     instance_id = models.CharField(max_length=100)
     submission_date = models.DateField()
     is_complete = models.BooleanField(default=True)
