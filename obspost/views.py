@@ -35,8 +35,9 @@ DROPBOX_ACCESS_TOKEN = 'INf6UK08gzAAAAAAAAAAB3la9RwEaDqEf9Uh3AgSU3e9oZzw_v8NMgJV
 FILE_BASE_PATH = ""
 import json
 import dropbox
+from dropbox.exceptions import ApiError
 import requests
-
+from dropbox.files import WriteMode
 from obspost.models import Observation
 
 @csrf_exempt
@@ -53,12 +54,19 @@ def odk_receive(request):
         child = data["child"]
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
 
-        if data["picture"] != '':
+        if 'url' in data['picture']:
             filename = data["picture"]["filename"]
-            upload_location = "/" + child + "/" + filename
+            upload_location = "/pictures/" + child + "/" + filename
             dbx.files_save_url(upload_location, data["picture"]["url"])
 
-        #upload_location = "/" + child + "/observations.txt"
-        #dbx.files_upload("Submitted By: " + data["submitter"] + " at: " + data["starttime"] + " : " + data["observations"],upload_location, mode=dropbox.files.WriteMode)
-        #dbx.file
+        upload_location = "/observations/" + child + ".txt"
+        download_location = "." + upload_location
+        try:
+            dbx.files_download_to_file("./" + upload_location, upload_location)
+        except ApiError:
+            pass
+        with open(download_location, "a") as f:
+            f.write("Submitted By: " + data["submitter"] + " at: " + data["starttime"] + " : " + data["observations"] + "\n")
+        with open(download_location, "r") as f:
+            dbx.files_upload(f.read(), upload_location, mode=WriteMode("overwrite"))
     return HttpResponse()
