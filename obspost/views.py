@@ -54,7 +54,7 @@ def odk_receive(request):
         child = data["child"]
         dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
 
-        if 'url' in data['picture']:
+        if 'picture' in data and 'url' in data['picture']:
             filename = data["picture"]["filename"]
             upload_location = "/pictures/" + child + "/" + filename
             dbx.files_save_url(upload_location, data["picture"]["url"])
