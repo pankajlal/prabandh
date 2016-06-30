@@ -64,4 +64,4 @@ def odk_receive(request):
             f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
         with open(local_download_location, "r") as f:
             dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
-    return HttpResponse(BASE_DIR)
+    return HttpResponse()
