@@ -54,7 +54,7 @@ def odk_receive(request):
             dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
 
         dropbox_upload_location = "/observations/" + child + ".txt"
-        local_download_location = os.path.join(settings.BASE_DIR, dropbox_upload_location)
+        local_download_location = os.path.join(settings.BASE_DIR, "observations", child + ".txt")
         try:
             dbx.files_download_to_file(local_download_location, dropbox_upload_location)
         except ApiError:
