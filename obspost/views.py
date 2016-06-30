@@ -36,12 +36,11 @@ FILE_BASE_PATH = ""
 import json
 import dropbox
 from dropbox.exceptions import ApiError
-import requests
 from dropbox.files import WriteMode
-from obspost.models import Observation
-BASE_DIR = os.environ.get("BASE_DIR")
+
 @csrf_exempt
 def odk_receive(request):
+    BASE_DIR = os.environ.get("BASE_DIR")
     odk_data = json.loads(request.body.decode('utf-8'))
 
     for data in odk_data["data"]:
