@@ -42,6 +42,7 @@ from django.conf import settings
 @csrf_exempt
 def odk_receive(request):
 
+    BASE_DIR = os.environ.get("BASE_DIR")
     odk_data = json.loads(request.body.decode('utf-8'))
 
     for data in odk_data["data"]:
