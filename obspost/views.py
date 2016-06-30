@@ -37,10 +37,11 @@ import json
 import dropbox
 from dropbox.exceptions import ApiError
 from dropbox.files import WriteMode
+from django.conf import settings
 
 @csrf_exempt
 def odk_receive(request):
-    BASE_DIR = os.environ.get("BASE_DIR")
+
     odk_data = json.loads(request.body.decode('utf-8'))
 
     for data in odk_data["data"]:
@@ -53,7 +54,7 @@ def odk_receive(request):
             dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
 
         dropbox_upload_location = "/observations/" + child + ".txt"
-        local_download_location = os.path.join(BASE_DIR, dropbox_upload_location)
+        local_download_location = os.path.join(settings.BASE_DIR, dropbox_upload_location)
         try:
             dbx.files_download_to_file(local_download_location, dropbox_upload_location)
         except ApiError:
@@ -62,4 +63,4 @@ def odk_receive(request):
             f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
         with open(local_download_location, "r") as f:
             dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
-    return HttpResponse()
+    return HttpResponse(BASE_DIR)
