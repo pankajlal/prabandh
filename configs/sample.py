@@ -1,3 +1,4 @@
 PRABANDH_PG_USER='user'
 PRABANDH_PG_PASSWD='password'
 PRABANDH_PG_DATABASE='database'
+DROPBOX_AUTH_TOKEN='an_auth_token'
