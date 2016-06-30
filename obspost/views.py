@@ -39,7 +39,7 @@ from dropbox.exceptions import ApiError
 import requests
 from dropbox.files import WriteMode
 from obspost.models import Observation
-
+BASE_DIR = os.environ.get("BASE_DIR")
 @csrf_exempt
 def odk_receive(request):
     odk_data = json.loads(request.body.decode('utf-8'))
@@ -54,13 +54,13 @@ def odk_receive(request):
             dbx.files_save_url(upload_location, data["picture"]["url"])
 
         upload_location = "/observations/" + child + ".txt"
-        download_location = "." + upload_location
+        download_location = os.path.join(BASE_DIR, upload_location)
         try:
-            dbx.files_download_to_file("./" + upload_location, upload_location)
+            dbx.files_download_to_file(BASE_DIR + upload_location, upload_location)
         except ApiError:
             pass
         with open(download_location, "a+") as f:
-            f.write(data["submitter"] + "::" + data["starttime"] + "::" + data["observations"] + "\n")
+            f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
         with open(download_location, "r") as f:
             dbx.files_upload(f.read(), upload_location, mode=WriteMode("overwrite"))
     return HttpResponse()
