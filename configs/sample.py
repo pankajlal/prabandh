@@ -1,0 +1,3 @@
+PRABANDH_PG_USER='user'
+PRABANDH_PG_PASSWD='password'
+PRABANDH_PG_DATABASE='database'
