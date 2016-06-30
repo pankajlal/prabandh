@@ -50,17 +50,17 @@ def odk_receive(request):
 
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
             filename = data["picture"]["filename"]
-            upload_location = "/pictures/" + child + "/" + filename
-            dbx.files_save_url(upload_location, data["picture"]["url"])
+            dropbox_upload_location = "/pictures/" + child + "/" + filename
+            dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
 
-        upload_location = "/observations/" + child + ".txt"
-        download_location = os.path.join(BASE_DIR, upload_location)
+        dropbox_upload_location = "/observations/" + child + ".txt"
+        local_download_location = os.path.join(BASE_DIR, dropbox_upload_location)
         try:
-            dbx.files_download_to_file(BASE_DIR + upload_location, upload_location)
+            dbx.files_download_to_file(local_download_location, dropbox_upload_location)
         except ApiError:
             pass
-        with open(download_location, "a+") as f:
+        with open(local_download_location, "a+") as f:
             f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
-        with open(download_location, "r") as f:
-            dbx.files_upload(f.read(), upload_location, mode=WriteMode("overwrite"))
+        with open(local_download_location, "r") as f:
+            dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
     return HttpResponse()
