@@ -31,7 +31,7 @@ from django.http import HttpResponse
 
 FORM_ID = "build_BeMe-Observations_1466792215"
 
-DROPBOX_ACCESS_TOKEN = 'INf6UK08gzAAAAAAAAAAB3la9RwEaDqEf9Uh3AgSU3e9oZzw_v8NMgJV_sbvLxsR'
+DROPBOX_ACCESS_TOKEN = os.environ.get("DROPBOX_AUTH_TOKEN")
 FILE_BASE_PATH = ""
 import json
 import dropbox
