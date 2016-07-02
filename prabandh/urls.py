@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from obspost import views
+from obspost.views import odk_receive
+from books.views import isbn_post
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^observations', views.odk_receive)
+    url(r'^observations', odk_receive),
+    url(r'^add_isbn', isbn_post)
 ]
