@@ -41,7 +41,7 @@ def isbn_post(request):
 
     isbn_details = odk_data.get('data')
     for item in isbn_details:
-        isbn_no = item.get('code')
+        isbn_no = item.get('isbn')
         meta_dict = app.meta(isbn_no)
         if meta_dict:
             if meta_dict.get('Title'):
