@@ -53,6 +53,7 @@ def isbn_post(request):
                             publisher=meta_dict.get('Publisher'),
                             year=date(2001, 1, 1)
                             )
+                    isbn.save()
                 for a in meta_dict.get('Authors'):
                     try:
                         author = Author.objects.get(name=a)
