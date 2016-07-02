@@ -21,5 +21,5 @@ from books.views import isbn_post
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^observations', odk_receive),
-    url(r'^add_isbn', isbn_post)
+    url(r'^add_isbn/', isbn_post)
 ]
