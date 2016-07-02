@@ -51,7 +51,7 @@ def isbn_post(request):
                     isbn = Isbn(code=isbn_no,
                             title=meta_dict.get('Title'),
                             publisher=meta_dict.get('Publisher'),
-                            year=date(int(meta_dict.get('Year')), 1, 1)
+                            year=date(2001, 1, 1)
                             )
                 for a in meta_dict.get('Authors'):
                     try:
