@@ -10,7 +10,7 @@ from isbntools import app
 
 class Isbn(models.Model):
     code = models.CharField(max_length=20)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=400)
     author = models.CharField(max_length=200)
     year = models.DateField()
     publisher = models.CharField(max_length=100)
