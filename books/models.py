@@ -16,13 +16,20 @@ class Isbn(models.Model):
     publisher = models.CharField(max_length=100)
     authors = models.ManyToManyField('Author', related_name='authors')
 
+    def __str__(self):
+        return self.title
+
 class State(models.Model):
     name = models.CharField(max_length=10)
 
-class Book(models.Model):
+class BookItem(models.Model):
     isbn = models.ForeignKey(Isbn)
     beme_id = models.IntegerField()
     current_state = models.ForeignKey(State)
+    owner = models.ForeignKey(User, default=None, blank=True)
+
+    #def __str__(self):
+    #    return self.isbn.name + " " + self.current_state.name
 
 class Author(models.Model):
     name = models.CharField(max_length=100, blank=None, unique=True)
@@ -37,7 +44,7 @@ ACTION_CHOICES = (
 )
 
 class Transaction(models.Model):
-    book = models.ForeignKey(Book)
+    book = models.ForeignKey(BookItem)
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
     logged_in_user = models.ForeignKey(User, related_name='logged_in_user')

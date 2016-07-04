@@ -20,6 +20,9 @@ class Learner(models.Model):
     parent = models.ForeignKey(Parent)
     sakha = models.ForeignKey(Sakha)
 
+    def __str__(self):
+        
+
 
 admin.site.register(Faculty)
 admin.site.register(Sakha)

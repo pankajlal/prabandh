@@ -35,6 +35,28 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+
+def _make_isbn(isbn_no):
+
+    meta_dict = app.meta(isbn_no)
+    if meta_dict:
+        if meta_dict.get('Title'):
+            try:
+                isbn = Isbn.objects.get(code=isbn_no)
+            except ObjectDoesNotExist:
+                isbn = Isbn(code=isbn_no,
+                            title=meta_dict.get('Title'),
+                            publisher=meta_dict.get('Publisher'),
+                            year=date(2001, 1, 1)
+                            )
+                isbn.save()
+            for a in meta_dict.get('Authors'):
+                try:
+                    author = Author.objects.get(name=a)
+                except ObjectDoesNotExist:
+                    author = Author.objects.create(name=a)
+                isbn.authors.add(author)
+
 @csrf_exempt
 def isbn_post(request):
     odk_data = json.loads(request.body.decode('utf-8'))
@@ -42,24 +64,8 @@ def isbn_post(request):
     isbn_details = odk_data.get('data')
     for item in isbn_details:
         isbn_no = item.get('isbn')
-        meta_dict = app.meta(isbn_no)
-        if meta_dict:
-            if meta_dict.get('Title'):
-                try:
-                    isbn = Isbn.objects.get(code=isbn_no)
-                except ObjectDoesNotExist:
-                    isbn = Isbn(code=isbn_no,
-                            title=meta_dict.get('Title'),
-                            publisher=meta_dict.get('Publisher'),
-                            year=date(2001, 1, 1)
-                            )
-                    isbn.save()
-                for a in meta_dict.get('Authors'):
-                    try:
-                        author = Author.objects.get(name=a)
-                    except ObjectDoesNotExist:
-                        author = Author.objects.create(name=a)
-                    isbn.authors.add(author)
+        _make_isbn(isbn_no)
+
     return HttpResponse()
 
 
