@@ -9,11 +9,17 @@ from django.contrib import admin
 class Faculty(models.Model):
     user = models.OneToOneField(User)
 
+    class Meta:
+        verbose_name_plural = 'Faculties'
+
     def __str__(self):
         return self.user.get_full_name()
 
 class Sakha(models.Model):
     user = models.OneToOneField(User)
+
+    class Meta:
+        verbose_name_plural="Sakhayein"
 
     def __str__(self):
         return self.user.get_full_name()
