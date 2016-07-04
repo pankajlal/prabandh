@@ -9,11 +9,20 @@ from django.contrib import admin
 class Faculty(models.Model):
     user = models.OneToOneField(User)
 
+    def __str__(self):
+        return self.user.get_full_name()
+
 class Sakha(models.Model):
     user = models.OneToOneField(User)
 
+    def __str__(self):
+        return self.user.get_full_name()
+
 class Parent(models.Model):
     user = models.OneToOneField(User)
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 class Learner(models.Model):
     user = models.OneToOneField(User)
@@ -21,7 +30,7 @@ class Learner(models.Model):
     sakha = models.ForeignKey(Sakha)
 
     def __str__(self):
-        
+        return self.user.get_full_name()
 
 
 admin.site.register(Faculty)
