@@ -38,7 +38,7 @@ import dropbox
 from dropbox.exceptions import ApiError
 from dropbox.files import WriteMode
 from django.conf import settings
-
+from datetime import datetime
 @csrf_exempt
 def odk_receive(request):
 
@@ -51,7 +51,12 @@ def odk_receive(request):
 
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
             filename = data["picture"]["filename"]
-            dropbox_upload_location = "/pictures/" + child + "/" + filename
+            now = datetime.now().strftime("%Y%m%d_%H%M")
+            if data.get("observations"):
+                fname = now + "_" + data.get("observations")[:30] + os.path.splitext(filename)[1]
+            else:
+                fname = now + "_" + filename
+            dropbox_upload_location = "/pictures/" + child + "/" + fname
             dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
 
         dropbox_upload_location = "/observations/" + child + ".txt"
