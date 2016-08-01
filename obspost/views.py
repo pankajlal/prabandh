@@ -39,6 +39,8 @@ from dropbox.exceptions import ApiError
 from dropbox.files import WriteMode
 from django.conf import settings
 from datetime import datetime
+from obspost.gsheets import append_gsheets
+
 @csrf_exempt
 def odk_receive(request):
 
@@ -69,4 +71,9 @@ def odk_receive(request):
             f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
         with open(local_download_location, "r") as f:
             dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
+        append_gsheets([now, child, data["submitter"], data["starttime"], data["observations"]])
+
     return HttpResponse()
+
+def odk_receive_gdata(request):
+    pass
