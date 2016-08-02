@@ -44,36 +44,38 @@ from obspost.gsheets import append_gsheets
 @csrf_exempt
 def odk_receive(request):
 
-    BASE_DIR = os.environ.get("BASE_DIR")
+  #  BASE_DIR = os.environ.get("BASE_DIR")
     odk_data = json.loads(request.body.decode('utf-8'))
-
+    now = datetime.now().strftime("%Y%m%d_%H%M")
     for data in odk_data["data"]:
         child = data["child"]
-        dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
-
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
-            filename = data["picture"]["filename"]
-            now = datetime.now().strftime("%Y%m%d_%H%M")
-            if data.get("observations"):
-                fname = now + "_" + data.get("observations")[:30] + os.path.splitext(filename)[1]
-            else:
-                fname = now + "_" + filename
-            dropbox_upload_location = "/pictures/" + child + "/" + fname
-            dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
-
-        dropbox_upload_location = "/observations/" + child + ".txt"
-        local_download_location = os.path.join(BASE_DIR, "observations", child + ".txt")
-        try:
-            dbx.files_download_to_file(local_download_location, dropbox_upload_location)
-        except ApiError:
-            pass
-        with open(local_download_location, "a+") as f:
-            f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
-        with open(local_download_location, "r") as f:
-            dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
-        append_gsheets([now, child, data["submitter"], data["starttime"], data["observations"]])
-
+            append_gsheets([now, child, data["submitter"], data["starttime"], data["observations"], data["picture"]["url"]])
+        else:
+            append_gsheets([now, child, data["submitter"], data["starttime"], data["observations"]])
     return HttpResponse()
 
-def odk_receive_gdata(request):
+def odk_receive_dropbox(request):
+    #    # dbx = dropbox.Dropbox(DROPBOX_ACCESS_TOKEN)
+    #
+    #     if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
+    #         filename = data["picture"]["filename"]
+    #
+    #         if data.get("observations"):
+    #             fname = now + "_" + data.get("observations")[:30] + os.path.splitext(filename)[1]
+    #         else:
+    #             fname = now + "_" + filename
+    #    dropbox_upload_location = "/pictures/" + child + "/" + fname
+    #    dbx.files_save_url(dropbox_upload_location, data["picture"]["url"])
+
+    # dropbox_upload_location = "/observations/" + child + ".txt"
+    # local_download_location = os.path.join(BASE_DIR, "observations", child + ".txt")
+    # try:
+    #   dbx.files_download_to_file(local_download_location, dropbox_upload_location)
+    # except ApiError:
+    #    pass
+    # with open(local_download_location, "a+") as f:
+    #    f.write(data["submitter"] + "," + data["starttime"] + "," + data["observations"] + "\n")
+    # with open(local_download_location, "r") as f:
+    #  dbx.files_upload(f.read(), dropbox_upload_location, mode=WriteMode("overwrite"))
     pass
