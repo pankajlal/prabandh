@@ -4,19 +4,25 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 # Create your models here.
+from django.contrib import admin
 
 SUBMITTER = (('parent', 'parent'),
              ('faculty','faculty'),
              ('expert', 'expert'),
              ('child', 'child')
              )
+
+from users.models import Learner
+
 class Observation(models.Model):
     instance_id = models.CharField(max_length=100)
     submission_date = models.DateField()
-    is_complete = models.BooleanField(default=True)
-    date_marked_as_complete = models.DateField()
-    image = models.ImageField()
+    image = models.ImageField(blank=True, null=True)
     observation = models.TextField()
-    child = models.ForeignKey(User)
+    child = models.ForeignKey(User, null=True)
     submitter = models.CharField(max_length=10, choices=SUBMITTER)
-    start_time = models.DateField()
+
+class ChildSheet(models.Model):
+    sheetcode = models.CharField(max_length=200)
+    learner = models.OneToOneField(Learner)
+

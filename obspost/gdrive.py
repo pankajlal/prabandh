@@ -6,6 +6,9 @@ from apiclient import discovery
 import oauth2client
 from oauth2client import client
 from oauth2client import tools
+from googleapiclient.http import MediaFileUpload
+import urllib
+from tempfile import NamedTemporaryFile
 import json
 
 #try:
@@ -16,7 +19,7 @@ import json
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
+SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
@@ -35,7 +38,7 @@ def get_credentials():
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
-                                   'sheets.googleapis.com-python-quickstart.json')
+                                   'drive-python-quickstart.json')
 
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
@@ -49,7 +52,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def append_gsheets(sheet_id, ulist):
+def explain_drive_contents(child, url, name):
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
@@ -58,21 +61,41 @@ def append_gsheets(sheet_id, ulist):
     """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
-    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
-                    'version=v4')
-    service = discovery.build('sheets', 'v4', http=http,
-                              discoveryServiceUrl=discoveryUrl)
+    service = discovery.build('drive', 'v3', http=http)
+
+    results = service.files().list(
+        pageSize=10, fields="nextPageToken, files(id, name)").execute()
+
+    file_metadata = {
+        'name': child,
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+    afile = service.files().create(body=file_metadata, fields='id').execute()
+    print ('Folder ID: %s' % afile.get('id'))
+    folder_id = afile.get('id')
+
+    # items = results.get('files', [])
+    # if not items:
+    #     print('No files found.')
+    # else:
+    #     print('Files:')
+    #     for item in items:
+    #         print('{0} ({1})'.format(item['name'], item['id']))
+
+    file_metadata = {
+        'name': name,
+        'parents': [folder_id]
+    }
+    import random
+    import string
+    randstr = ''.join(random.choice(string.uppercase + string.digits) for _ in range(0,10))
+    fname = "/tmp/" + randstr + ".jpg"
+    img_file = urllib.URLopener()
+    img_file.retrieve(url, fname)
 
 
-    rangeName = 'Sheet1!A1:B2'
-    myBody = {u'values': [ulist],
-              u'range': rangeName,
-              u'majorDimension': u'ROWS'}
-    rangeOutput = rangeName
-    sheet = service.spreadsheets().values()
-    result = sheet.append(
-                    spreadsheetId=sheet_id,
-                    range=rangeName,
-                    valueInputOption='RAW',
-                    insertDataOption='INSERT_ROWS',
-                    body=myBody).execute()
+
+
+    media = MediaFileUpload(name, mimetype='image/jpg')
+    afile = service.files().create(body=file_metadata, media_body=media,
+                                   fields='id')
