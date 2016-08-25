@@ -26,3 +26,5 @@ class ChildSheet(models.Model):
     sheetcode = models.CharField(max_length=200)
     learner = models.OneToOneField(Learner)
 
+    def __str__(self):
+        return self.learner.user.get_full_name() + " - Sheet: %s" % (self.sheetcode)

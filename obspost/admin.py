@@ -8,4 +8,4 @@ from .models import ChildSheet
 
 @admin.register(ChildSheet)
 class ChildSheetAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('learner', 'sheetcode')
