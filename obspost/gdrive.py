@@ -7,7 +7,7 @@ import oauth2client
 from oauth2client import client
 from oauth2client import tools
 from googleapiclient.http import MediaFileUpload
-import urllib
+import urllib.request as urllib
 import random
 import string
 import os
