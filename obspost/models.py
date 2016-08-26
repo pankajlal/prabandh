@@ -24,6 +24,7 @@ class Observation(models.Model):
 
 class ChildSheet(models.Model):
     sheetcode = models.CharField(max_length=200)
+    foldercode = models.CharField(max_length=200)
     learner = models.OneToOneField(Learner)
 
     def __str__(self):

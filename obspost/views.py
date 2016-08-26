@@ -37,17 +37,15 @@ FORM_ID = "build_BeMe-Observations_1466792215"
 DROPBOX_ACCESS_TOKEN = os.environ.get("DROPBOX_AUTH_TOKEN")
 FILE_BASE_PATH = ""
 import json
-import dropbox
-from dropbox.exceptions import ApiError
-from dropbox.files import WriteMode
-from django.conf import settings
 from datetime import datetime
 from obspost.gsheets import append_gsheets
 from .models import Observation, ChildSheet
+from .gdrive import upload_file
 from users.models import Learner
 from django.utils.dateparse import parse_datetime
 
 BEME_SHEET_ID = '1mKo5yejjD0J9gfivqlSbWw6NJchGMFFs5T2FbgbzzP4'
+BEME_FOLDER_ID = '0B2W9xFXyMLWyN1lRaTYtaVhrYzQ'
 @csrf_exempt
 def odk_receive(request):
 
@@ -66,9 +64,11 @@ def odk_receive(request):
         if cs is not None:
             user = cs.learner.user
             sheet_id = cs.sheetcode
+            folder_id = cs.foldercode
         else:
             user = None
             sheet_id = BEME_SHEET_ID
+            folder_id = BEME_FOLDER_ID
 
         instance_id = data.get("instanceID")
         observation = data.get("observations")
@@ -78,18 +78,20 @@ def odk_receive(request):
         if Observation.objects.filter(instance_id = instance_id).first():
             logger.info("This post has already been logged. So not logging again")
         else:
-            o = Observation(instance_id=instance_id,
-                            submission_date=picture_time,
-                            observation=observation,
-                            child = user,
-                            submitter=submitter
-                        )
-            o.save()
             if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
                 logger.info("picture found, appending the url")
-                append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"], data["picture"]["url"]])
-
+                name = data['observations'][:40]
+                file_id = upload_file(folder_id, url=data['picture']['url'], file_name=name)
+                content = 'https://drive.google.com/open?id=%s' % (file_id)
+                append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"], content])
             else:
                 logger.info("no picture in the post. appending without logger")
                 append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"]])
+            o = Observation(instance_id=instance_id,
+                            submission_date=picture_time,
+                            observation=observation,
+                            child=user,
+                            submitter=submitter
+                            )
+            o.save()
     return HttpResponse()

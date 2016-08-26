@@ -8,14 +8,10 @@ from oauth2client import client
 from oauth2client import tools
 from googleapiclient.http import MediaFileUpload
 import urllib
-from tempfile import NamedTemporaryFile
-import json
+import random
+import string
+import os
 
-#try:
-#    import argparse
-#    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-#except ImportError:
-#    flags = None
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
@@ -52,50 +48,47 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def explain_drive_contents(child, url, name):
+def upload_file(folder_id, url, file_name):
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
     students in a sample spreadsheet:
     https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
     """
+
+    #Create a temporary file
+    randstr = ''.join(random.choice(string.uppercase + string.digits) for _ in range(0,10))
+    fname = "/tmp/" + randstr + ".jpg"
+
+    #Download the file at url into the temporary file
+    img_file = urllib.URLopener()
+    img_file.retrieve(url, fname)
+
+    #Create the MediaFileUpload Object
+    media = MediaFileUpload(fname, mimetype='image/jpg')
+
+    #Obtain credentials for upload of file
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v3', http=http)
 
-    results = service.files().list(
-        pageSize=10, fields="nextPageToken, files(id, name)").execute()
-
     file_metadata = {
-        'name': child,
-        'mimeType': 'application/vnd.google-apps.folder'
-    }
-    afile = service.files().create(body=file_metadata, fields='id').execute()
-    print ('Folder ID: %s' % afile.get('id'))
-    folder_id = afile.get('id')
-
-    # items = results.get('files', [])
-    # if not items:
-    #     print('No files found.')
-    # else:
-    #     print('Files:')
-    #     for item in items:
-    #         print('{0} ({1})'.format(item['name'], item['id']))
-
-    file_metadata = {
-        'name': name,
+        'file_name': file_name,
         'parents': [folder_id]
     }
-    import random
-    import string
-    randstr = ''.join(random.choice(string.uppercase + string.digits) for _ in range(0,10))
-    fname = "/tmp/" + randstr + ".jpg"
-    img_file = urllib.URLopener()
-    img_file.retrieve(url, fname)
 
-
-
-
-    media = MediaFileUpload(name, mimetype='image/jpg')
+    # Execute the upload
     afile = service.files().create(body=file_metadata, media_body=media,
-                                   fields='id')
+                                   fields='id').execute()
+
+    file_id = afile.get('id')
+    file_update_metadata = {
+        'title': file_name
+    }
+    v2service = discovery.build('drive', 'v2', http=http)
+    updated_file = v2service.files().patch(fileId=file_id, body=file_update_metadata, fields='title').execute()
+
+    #Return the id of the created file
+
+    os.remove(fname)
+    return file_id
