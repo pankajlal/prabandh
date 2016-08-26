@@ -64,7 +64,10 @@ def odk_receive(request):
         if cs is not None:
             user = cs.learner.user
             sheet_id = cs.sheetcode
-            folder_id = cs.foldercode
+            if cs.foldercode != 'unknown':
+                folder_id = cs.foldercode
+            else:
+                folder_id = BEME_FOLDER_ID
         else:
             user = None
             sheet_id = BEME_SHEET_ID
