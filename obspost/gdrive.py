@@ -57,7 +57,7 @@ def upload_file(folder_id, url, file_name):
     """
 
     #Create a temporary file
-    randstr = ''.join(random.choice(string.uppercase + string.digits) for _ in range(0,10))
+    randstr = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(0,10))
     fname = "/tmp/" + randstr + ".jpg"
 
     #Download the file at url into the temporary file
