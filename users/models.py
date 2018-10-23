@@ -37,8 +37,10 @@ class Learner(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
-
-
+   
+    class Meta:
+        ordering = ['user__first_name','user__last_name',]
+    
 admin.site.register(Faculty)
 admin.site.register(Sakha)
 admin.site.register(Parent)

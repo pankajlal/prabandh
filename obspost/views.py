@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import logging
 from django.conf import settings
-from common.utils import logger
+#from common.utils import logger
 #{
 # "token":"",
 # "content":"record",
@@ -43,6 +43,8 @@ from .models import Observation, ChildSheet
 from .gdrive import upload_file
 from users.models import Learner
 from django.utils.dateparse import parse_datetime
+import logging
+logger = logging.getLogger(__name__)
 
 BEME_SHEET_ID = '1mKo5yejjD0J9gfivqlSbWw6NJchGMFFs5T2FbgbzzP4'
 BEME_FOLDER_ID = '0B2W9xFXyMLWyN1lRaTYtaVhrYzQ'
@@ -83,13 +85,20 @@ def odk_receive(request):
         else:
             if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
                 logger.info("picture found, appending the url")
-                name = data['observations'][:40]
+                if observation:
+                    name = data['observations']
+                else:
+                    name = data['picture']['filename']			
                 file_id = upload_file(folder_id, url=data['picture']['url'], file_name=name)
-                content = 'https://drive.google.com/open?id=%s' % (file_id)
+                if file_id:
+                    content = 'https://drive.google.com/open?id=%s' % (file_id)
+                else:
+                    content = ''
                 append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"], content])
             else:
-                logger.info("no picture in the post. appending without logger")
+                logger.error("no picture in the post. appending without logger")
                 append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"]])
+            
             o = Observation(instance_id=instance_id,
                             submission_date=picture_time,
                             observation=observation,
@@ -97,4 +106,5 @@ def odk_receive(request):
                             submitter=submitter
                             )
             o.save()
+    
     return HttpResponse()

@@ -18,9 +18,12 @@ class Observation(models.Model):
     instance_id = models.CharField(max_length=100)
     submission_date = models.DateField()
     image = models.ImageField(blank=True, null=True)
-    observation = models.TextField()
+    observation = models.TextField(blank=True, null=True)
     child = models.ForeignKey(User, null=True)
-    submitter = models.CharField(max_length=10, choices=SUBMITTER)
+    submitter = models.CharField(max_length=10, choices=SUBMITTER, blank=True, null=True)
+
+    def __str__(self):
+        return self.observation
 
 class ChildSheet(models.Model):
     sheetcode = models.CharField(max_length=200)
