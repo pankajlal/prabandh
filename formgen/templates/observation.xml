@@ -1,0 +1,127 @@
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">
+  <h:head>
+    <h:title>BeMe Observations Form</h:title>
+    <model>
+      <instance>
+        <data id="build_BeMe-Observations-Form_1540230649">
+          <meta>
+            <instanceID/>
+          </meta>
+          <picture/>
+          <observations/>
+          <child/>
+          <submitter/>
+          <faculty/>
+        </data>
+      </instance>
+      <itext>
+        <translation lang="English">
+          <text id="/data/picture:label">
+            <value>Picture</value>
+          </text>
+          <text id="/data/picture:hint">
+            <value>Take or Upload picture here</value>
+          </text>
+          <text id="/data/observations:label">
+            <value>Text Observations</value>
+          </text>
+          <text id="/data/observations:hint">
+            <value>Your observations for the learner</value>
+          </text>
+          <text id="/data/child:label">
+            <value>Child's Name</value>
+          </text>
+          <text id="/data/child:hint">
+            <value>Name of child</value>
+          </text>
+          {% for child in children %}
+          <text id="/data/child:option{{forloop.counter0}}">
+            <value>{{ child.username }}</value>
+          </text>
+          {%  endfor %}
+          <text id="/data/submitter:label">
+            <value>Submitter</value>
+          </text>
+          <text id="/data/submitter:option0">
+            <value>Faculty</value>
+          </text>
+          <text id="/data/submitter:option1">
+            <value>Expert</value>
+          </text>
+          <text id="/data/submitter:option2">
+            <value>Child</value>
+          </text>
+          <text id="/data/submitter:option3">
+            <value>Parent</value>
+          </text>
+          <text id="/data/faculty:label">
+            <value>Faculty</value>
+          </text>
+          <text id="/data/faculty:hint">
+            <value></value>
+          </text>
+          {% for faculty in facilitators %}
+          <text id="/data/faculty:option{{forloop.counter0}}">
+            <value>{{ faculty.username }}</value>
+          </text>
+          {%  endfor %}
+        </translation>
+      </itext>
+      <bind nodeset="/data/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())"/>
+      <bind nodeset="/data/picture" type="binary"/>
+      <bind nodeset="/data/observations" type="string"/>
+      <bind nodeset="/data/child" type="select"/>
+      <bind nodeset="/data/submitter" type="select1"/>
+      <bind nodeset="/data/faculty" type="select1" relevant="(selected(/data/submitter, 'faculty'))"/>
+    </model>
+  </h:head>
+  <h:body>
+    <upload ref="/data/picture" mediatype="image/*">
+      <label ref="jr:itext('/data/picture:label')"/>
+      <hint ref="jr:itext('/data/picture:hint')"/>
+    </upload>
+    <input ref="/data/observations">
+      <label ref="jr:itext('/data/observations:label')"/>
+      <hint ref="jr:itext('/data/observations:hint')"/>
+    </input>
+    <select ref="/data/child">
+      <label ref="jr:itext('/data/child:label')"/>
+      <hint ref="jr:itext('/data/child:hint')"/>
+      {% for child in childrens %}
+      <item>
+        <label ref="jr:itext('/data/child:option{{ forloop.counter0 }}')"/>
+        <value>{{ child.username }}</value>
+      </item>
+      {%  endfor %}
+    </select>
+    <select1 ref="/data/submitter">
+      <label ref="jr:itext('/data/submitter:label')"/>
+      <item>
+        <label ref="jr:itext('/data/submitter:option0')"/>
+        <value>faculty</value>
+      </item>
+      <item>
+        <label ref="jr:itext('/data/submitter:option1')"/>
+        <value>expert</value>
+      </item>
+      <item>
+        <label ref="jr:itext('/data/submitter:option2')"/>
+        <value>child</value>
+      </item>
+      <item>
+        <label ref="jr:itext('/data/submitter:option3')"/>
+        <value>parent</value>
+      </item>
+    </select1>
+    <select1 ref="/data/faculty">
+      <label ref="jr:itext('/data/faculty:label')"/>
+      <hint ref="jr:itext('/data/faculty:hint')"/>
+      {% for faculty in facilitators %}
+      <item>
+        <label ref="jr:itext('/data/faculty:option{{forloop.counter0}}')"/>
+        <value>{{faculty.username}}</value>
+      </item>
+     {%  endfor %}
+    </select1>
+  </h:body>
+</h:html>
