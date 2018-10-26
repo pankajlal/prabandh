@@ -17,9 +17,9 @@ from django.conf.urls import url
 from django.contrib import admin
 from obspost.views import odk_receive
 from books.views import isbn_post
-
+from formgen.views import odkform
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^observations', odk_receive),
-    url(r'^add_isbn/', isbn_post)
+    url(r'^odkform/', odkform)
 ]

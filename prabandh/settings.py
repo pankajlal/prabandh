@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yk(-vs_x)1iknedg(x(%s1^ib!2wd5hzp3@8jt5p#eckrc!2cu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = int(os.environ.get('DEBUG'))
 
-ALLOWED_HOSTS = ['prabandh.beme.org.in']
+ALLOWED_HOSTS = ['prabandh.beme.org.in', '127.0.0.1']
 
 STATIC_ROOT= os.path.join(BASE_DIR, "static")
 
@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'books',
     'users',
     'obspost',
-    'common'
+    'common',
+    'formgen'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -137,7 +138,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/beme/deployment/prabandh/logs/debug.log',
+            'filename': os.path.join(BASE_DIR,"logs", "debug.log")
         },
     },
     'loggers': {
