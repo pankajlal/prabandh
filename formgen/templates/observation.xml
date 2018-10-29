@@ -87,7 +87,7 @@
     <select ref="/data/child">
       <label ref="jr:itext('/data/child:label')"/>
       <hint ref="jr:itext('/data/child:hint')"/>
-      {% for child in childrens %}
+      {% for child in children %}
       <item>
         <label ref="jr:itext('/data/child:option{{ forloop.counter0 }}')"/>
         <value>{{ child.username }}</value>
