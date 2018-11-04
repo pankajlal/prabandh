@@ -73,7 +73,7 @@ def get_children_upload_specs(children):
 
 @csrf_exempt
 def odk_receive(request):
-
+    logger.info(request)
     def get_url(data):
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
             return data["picture"]["url"]
