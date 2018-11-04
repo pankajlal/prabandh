@@ -1,0 +1,70 @@
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">
+  <h:head>
+    <h:title>BeMe Learner Observations</h:title>
+    <model>
+      <instance>
+        <data id="build_BeMe-Learner-Observations_1541299279" version="{{version}}">
+          <meta>
+            <instanceID/>
+          </meta>
+          <picture/>
+          <observation/>
+          <child/>
+          <username/>
+        </data>
+      </instance>
+      <itext>
+        <translation lang="English">
+          <text id="/data/picture:label">
+            <value>Add a picture</value>
+          </text>
+          <text id="/data/picture:hint">
+            <value>Take a picture or upload one</value>
+          </text>
+          <text id="/data/observation:label">
+            <value>Observations</value>
+          </text>
+          <text id="/data/observation:hint">
+            <value>Write your observations here</value>
+          </text>
+          <text id="/data/child:label">
+            <value>Learner</value>
+          </text>
+          <text id="/data/child:hint">
+            <value>Select Learner's here pertaining to this observation</value>
+          </text>
+          {% for child in children %}
+          <text id="/data/child:option{{forloop.counter0}}">
+            <value>{{child.first_name}} {{child.last_name}}</value>
+          </text>
+          {% endfor %}
+        </translation>
+      </itext>
+      <bind nodeset="/data/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())"/>
+      <bind nodeset="/data/picture" type="binary"/>
+      <bind nodeset="/data/observation" type="string" required="true()" constraint="(regex(., &quot;^.{10,}$&quot;))" jr:constraintMsg="Response length must be between 10 and "/>
+      <bind nodeset="/data/child" type="select" required="true()"/>
+      <bind nodeset="/data/username" type="string" jr:preload="property" jr:preloadParams="username"/>
+    </model>
+  </h:head>
+  <h:body>
+    <upload ref="/data/picture" mediatype="image/*">
+      <label ref="jr:itext('/data/picture:label')"/>
+      <hint ref="jr:itext('/data/picture:hint')"/>
+    </upload>
+    <input ref="/data/observation">
+      <label ref="jr:itext('/data/observation:label')"/>
+      <hint ref="jr:itext('/data/observation:hint')"/>
+    </input>
+    <select ref="/data/child">
+      <label ref="jr:itext('/data/child:label')"/>
+      <hint ref="jr:itext('/data/child:hint')"/>
+      {% for child in children %}
+      <item>
+        <label ref="jr:itext('/data/child:option{{forloop.counter0}}')"/>
+        <value>{{child.username}}</value>
+      </item>
+      {%  endfor %}
+    </select>
+  </h:body>
+</h:html>
