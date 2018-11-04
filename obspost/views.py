@@ -125,7 +125,7 @@ def odk_receive(request):
                                                          observation, ''])
 
             o = Observation(instance_id=instance_id,
-                            submission_date=picture_time,
+                            submission_date=datetime.now(),
                             observation=observation,
                             submitter=submitter
                             )
