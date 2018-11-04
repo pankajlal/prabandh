@@ -96,9 +96,9 @@ def odk_receive(request):
                 folder_ids.append(learner['folder_id'])
 
         instance_id = data.get("instanceID")
-        observation = data.get("observations")
+        observation = data.get("observation")
         submitter = data.get("username")
-        picture_time = datetime.now().strftime("%d %b %Y")
+        picture_time = datetime.now().strftime("%d %b %Y %I:%M %p")
         url = get_url(data)
 
         if Observation.objects.filter(instance_id = instance_id).first():
