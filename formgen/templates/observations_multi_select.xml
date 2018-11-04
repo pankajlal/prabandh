@@ -11,6 +11,7 @@
           <observation/>
           <child/>
           <username/>
+          <starttime/>
         </data>
       </instance>
       <itext>
@@ -45,6 +46,7 @@
       <bind nodeset="/data/observation" type="string" required="true()" constraint="(regex(., &quot;^.{10,}$&quot;))" jr:constraintMsg="Response length must be between 10 and "/>
       <bind nodeset="/data/child" type="select" required="true()"/>
       <bind nodeset="/data/username" type="string" jr:preload="property" jr:preloadParams="username"/>
+      <bind nodeset="/data/starttime" type="dateTime" jr:preload="timestamp" jr:preloadParams="start"/>
     </model>
   </h:head>
   <h:body>

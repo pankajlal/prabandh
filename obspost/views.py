@@ -98,7 +98,9 @@ def odk_receive(request):
         instance_id = data.get("instanceID")
         observation = data.get("observation")
         submitter = data.get("username")
-        picture_time = datetime.now().strftime("%d %b %Y %I:%M %p")
+
+        picture_time = data.get("starttime")
+        time_now = datetime.now().strftime("%d %b %Y %I:%M %p")
         url = get_url(data)
 
 
@@ -117,12 +119,12 @@ def odk_receive(request):
                 else:
                     content = ''
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter,
+                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter, time_now
                                                          observation, content])
             else:
                 logger.error("no picture in the post. appending without logger")
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter,
+                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter, time_now
                                                          observation, ''])
 
             o = Observation(instance_id=instance_id,
