@@ -99,7 +99,7 @@ def odk_receive(request):
         instance_id = data.get("instanceID")
         observation = data.get("observation")
         submitter = data.get("username")
-        starttime = dateutil.parser.parse(data.get("starttime"))
+        starttime = dateutil.parser.parse(data.get("starttime")).strftime("%d %b %Y %I:%M %p")
 
         picture_time = data.get("starttime")
         time_now = datetime.now().strftime("%d %b %Y %I:%M %p")
