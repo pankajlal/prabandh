@@ -53,8 +53,6 @@ def get_children_upload_specs(children):
 
     learner_upload_specs = []
 
-    children = data.get("children")
-
     for child in children:
         cs = ChildSheet.objects.filter(learner__user__username = child).first()
         if cs is not None:
@@ -89,18 +87,6 @@ def odk_receive(request):
     for data in odk_data["data"]:
 
         children = data.get("child")
-        # cs = ChildSheet.objects.filter(learner__user__username = child).first()
-        # if cs is not None:
-        #     user = cs.learner.user
-        #     sheet_id = cs.sheetcode
-        #     if cs.foldercode != 'unknown':
-        #         folder_id = cs.foldercode
-        #     else:
-        #         folder_id = BEME_FOLDER_ID
-        # else:
-        #     user = None
-        #     sheet_id = BEME_SHEET_ID
-        #     folder_id = BEME_FOLDER_ID
         learner_uploads = get_children_upload_specs(children)
 
         #get all the folders in which this image should show
