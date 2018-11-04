@@ -3,6 +3,7 @@ import os
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+import dateutil.parser
 import logging
 from django.conf import settings
 #from common.utils import logger
@@ -39,7 +40,7 @@ FILE_BASE_PATH = ""
 import json
 from datetime import datetime
 from obspost.gsheets import append_gsheets
-from .models import Observation, ChildSheet,ObservedChild
+from .models import Observation, ChildSheet, ObservedChild
 from .gdrive import upload_file
 from users.models import Learner
 from django.utils.dateparse import parse_datetime
@@ -98,6 +99,7 @@ def odk_receive(request):
         instance_id = data.get("instanceID")
         observation = data.get("observation")
         submitter = data.get("username")
+        starttime = dateutil.parser.parse(data.get("starttime"))
 
         picture_time = data.get("starttime")
         time_now = datetime.now().strftime("%d %b %Y %I:%M %p")
@@ -119,12 +121,12 @@ def odk_receive(request):
                 else:
                     content = ''
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter, time_now,
+                    append_gsheets(learner['sheet_id'], [starttime, learner['user'].username, submitter, picture_time,
                                                          observation, content])
             else:
                 logger.error("no picture in the post. appending without logger")
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter, time_now,
+                    append_gsheets(learner['sheet_id'], [starttime, learner['user'].username, submitter, picture_time,
                                                          observation, ''])
 
             o = Observation(instance_id=instance_id,
