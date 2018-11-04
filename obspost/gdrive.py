@@ -53,7 +53,7 @@ def get_credentials(flags=None):
         #    credentials = tools.run(flow, store)
     return credentials
 
-def upload_file(folder_id, url, file_name):
+def upload_file(folder_ids, url, file_name):
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
@@ -86,7 +86,7 @@ def upload_file(folder_id, url, file_name):
 
         file_metadata = {
             'file_name': file_name,
-            'parents': [folder_id]
+            'parents': folder_ids
         }
 
         # Execute the upload

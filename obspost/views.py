@@ -39,7 +39,7 @@ FILE_BASE_PATH = ""
 import json
 from datetime import datetime
 from obspost.gsheets import append_gsheets
-from .models import Observation, ChildSheet
+from .models import Observation, ChildSheet,ObservedChild
 from .gdrive import upload_file
 from users.models import Learner
 from django.utils.dateparse import parse_datetime
@@ -48,20 +48,14 @@ logger = logging.getLogger(__name__)
 
 BEME_SHEET_ID = '1mKo5yejjD0J9gfivqlSbWw6NJchGMFFs5T2FbgbzzP4'
 BEME_FOLDER_ID = '0B2W9xFXyMLWyN1lRaTYtaVhrYzQ'
-@csrf_exempt
-def odk_receive(request):
 
-    def get_url(data):
-        if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
-            return data["picture"]["url"]
-        else:
-            return None
+def get_children_upload_specs(children):
 
-  #  BASE_DIR = os.environ.get("BASE_DIR")
-    odk_data = json.loads(request.body.decode('utf-8'))
-    now = datetime.now().strftime("%Y%m%d_%H%M")
-    for data in odk_data["data"]:
-        child = data.get("child")
+    learner_upload_specs = []
+
+    children = data.get("children")
+
+    for child in children:
         cs = ChildSheet.objects.filter(learner__user__username = child).first()
         if cs is not None:
             user = cs.learner.user
@@ -75,11 +69,52 @@ def odk_receive(request):
             sheet_id = BEME_SHEET_ID
             folder_id = BEME_FOLDER_ID
 
+        learner_upload_specs.append({'user': user, 'sheet_id': sheet_id, 'folder_id': folder_id})
+
+    return learner_upload_specs
+
+@csrf_exempt
+def odk_receive(request):
+
+    def get_url(data):
+        if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
+            return data["picture"]["url"]
+        else:
+            return None
+
+  #  BASE_DIR = os.environ.get("BASE_DIR")
+    odk_data = json.loads(request.body.decode('utf-8'))
+    now = datetime.now().strftime("%Y%m%d_%H%M")
+    #A submission could consist of multiple form data. Iterate over the whole
+    for data in odk_data["data"]:
+
+        children = data.get("child")
+        # cs = ChildSheet.objects.filter(learner__user__username = child).first()
+        # if cs is not None:
+        #     user = cs.learner.user
+        #     sheet_id = cs.sheetcode
+        #     if cs.foldercode != 'unknown':
+        #         folder_id = cs.foldercode
+        #     else:
+        #         folder_id = BEME_FOLDER_ID
+        # else:
+        #     user = None
+        #     sheet_id = BEME_SHEET_ID
+        #     folder_id = BEME_FOLDER_ID
+        learner_uploads = get_children_upload_specs(children)
+
+        #get all the folders in which this image should show
+        folder_ids = []
+        for learner in learner_uploads:
+            for learner in learner_uploads:
+                folder_ids.append(learner['folder_id'])
+
         instance_id = data.get("instanceID")
         observation = data.get("observations")
-        submitter = data.get("submitter")
+        submitter = data.get("username")
         picture_time = parse_datetime(data.get("starttime"))
         url = get_url(data)
+
         if Observation.objects.filter(instance_id = instance_id).first():
             logger.info("This post has already been logged. So not logging again")
         else:
@@ -89,22 +124,30 @@ def odk_receive(request):
                     name = data['observations']
                 else:
                     name = data['picture']['filename']			
-                file_id = upload_file(folder_id, url=data['picture']['url'], file_name=name)
+                file_id = upload_file(folder_ids, url=data['picture']['url'], file_name=name)
                 if file_id:
                     content = 'https://drive.google.com/open?id=%s' % (file_id)
                 else:
                     content = ''
-                append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"], content])
+                for learner in learner_uploads:
+                    append_gsheets(learner['sheet_id'], [now, learner['user'].username, data["submitter"],
+                                                         data["starttime"],
+                                               data["observations"], content])
             else:
                 logger.error("no picture in the post. appending without logger")
-                append_gsheets(sheet_id, [now, child, data["submitter"], data["starttime"], data["observations"]])
-            
+                for learner in learner_uploads:
+                    append_gsheets(learner['sheet_id'], [now, learner['user'].username, data["submitter"],
+                                                         data["starttime"],
+                                               data["observations"], content])
+
             o = Observation(instance_id=instance_id,
                             submission_date=picture_time,
                             observation=observation,
-                            child=user,
                             submitter=submitter
                             )
             o.save()
-    
+            for learner in learner_uploads:
+                observedchild = ObservedChild(observation = o, learner = learner['user'])
+                observedchild.save()
+
     return HttpResponse()
