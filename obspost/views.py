@@ -98,7 +98,7 @@ def odk_receive(request):
         instance_id = data.get("instanceID")
         observation = data.get("observations")
         submitter = data.get("username")
-        picture_time = parse_datetime(data.get("starttime"))
+        picture_time = datetime.now().strftime("%d %b %Y")
         url = get_url(data)
 
         if Observation.objects.filter(instance_id = instance_id).first():
