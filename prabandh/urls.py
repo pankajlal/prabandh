@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from obspost.views import odk_receive
+from obspost.views import odk_receive, receive_new
 from books.views import isbn_post
 from formgen.views import odkform
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^new_observations', receive_new),
     url(r'^observations', odk_receive),
     url(r'^odkform/', odkform)
 ]

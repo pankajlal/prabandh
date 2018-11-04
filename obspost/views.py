@@ -108,3 +108,10 @@ def odk_receive(request):
             o.save()
     
     return HttpResponse()
+
+@csrf_exempt
+def receive_new(request):
+
+    odk_data = json.loads(request.body.decode('utf-8'))
+    logger.info(odk_data) 
+    return HttpResponse()
