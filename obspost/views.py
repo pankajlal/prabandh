@@ -116,15 +116,13 @@ def odk_receive(request):
                 else:
                     content = ''
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [now, learner['user'].username, data["submitter"],
-                                                         data["starttime"],
-                                               data["observations"], content])
+                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter,
+                                                         observation, content])
             else:
                 logger.error("no picture in the post. appending without logger")
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [now, learner['user'].username, data["submitter"],
-                                                         data["starttime"],
-                                               data["observations"], content])
+                    append_gsheets(learner['sheet_id'], [picture_time, learner['user'].username, submitter,
+                                                         observation, ''])
 
             o = Observation(instance_id=instance_id,
                             submission_date=picture_time,
