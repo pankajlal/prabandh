@@ -101,13 +101,14 @@ def odk_receive(request):
         picture_time = datetime.now().strftime("%d %b %Y %I:%M %p")
         url = get_url(data)
 
+
         if Observation.objects.filter(instance_id = instance_id).first():
             logger.info("This post has already been logged. So not logging again")
         else:
             if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
                 logger.info("picture found, appending the url")
                 if observation:
-                    name = data['observations']
+                    name = observation
                 else:
                     name = data['picture']['filename']			
                 file_id = upload_file(folder_ids, url=data['picture']['url'], file_name=name)
