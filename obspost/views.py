@@ -131,7 +131,7 @@ def odk_receive(request):
                             )
             o.save()
             for learner in learner_uploads:
-                observedchild = ObservedChild(observation = o, learner = learner['user'])
+                observedchild = ObservedChild(observation = o, learner = learner['user'].learner)
                 observedchild.save()
 
     return HttpResponse()
