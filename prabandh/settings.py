@@ -134,16 +134,24 @@ APP_LOGGER = 'prabandh'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+    },
     'handlers': {
         'django_logs': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,"logs", "debug.log")
+            'filename': os.path.join(BASE_DIR,"logs", "debug.log"),
+            'formatter': 'console'
         },
         'app_logs': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,"logs", "info.log")
+            'filename': os.path.join(BASE_DIR,"logs", "info.log"),
+            'formatter': 'console'
         },
     },
     'loggers': {

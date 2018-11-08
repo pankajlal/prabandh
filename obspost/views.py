@@ -74,6 +74,8 @@ def get_children_upload_specs(children):
 
 @csrf_exempt
 def odk_receive(request):
+
+    logger.info("came into logger.info")
     def get_url(data):
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
             return data["picture"]["url"]
@@ -99,7 +101,9 @@ def odk_receive(request):
         observation = data.get("observation")
         submitter = data.get("username")
         starttime = dateutil.parser.parse(data.get("starttime")).strftime("%d %b %Y %I:%M %p")
-
+        
+        logger.info("instance id: %s, observation: %s, submitter: %s, form capture time: %"%(instance_id, observation, submitter, starttime))
+        
         picture_time = datetime.now().strftime("%d %b %Y %I:%M %p")
         url = get_url(data)
 
@@ -111,18 +115,22 @@ def odk_receive(request):
                 logger.info("picture found, appending the url")
                 if observation:
                     name = observation
+                    logger.info("naming the file as observation itself")
                 else:
                     name = data['picture']['filename']			
+                    logger.info("naming the file as filename as no observation found with this post")
                 file_id = upload_file(folder_ids, url=data['picture']['url'], file_name=name)
                 if file_id:
                     content = 'https://drive.google.com/open?id=%s' % (file_id)
                 else:
                     content = ''
                 for learner in learner_uploads:
+                    logger.info("appending for learner %s"%(learner['user'].username))
                     append_gsheets(learner['sheet_id'], [starttime, submitter, observation, content])
             else:
                 logger.error("no picture in the post. appending without logger")
                 for learner in learner_uploads:
+                    logger.info("appending for learner %s"%(learner['user'].username))
                     append_gsheets(learner['sheet_id'], [starttime, submitter, observation, ''])
 
             o = Observation(instance_id=instance_id,
