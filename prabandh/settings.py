@@ -135,20 +135,25 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'django_logs': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR,"logs", "debug.log")
         },
+        'app_logs': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,"logs", "info.log")
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['django_logs'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'obspost': {
-            'handlers': ['file'],
+            'handlers': ['app_logs'],
             'level': 'INFO',
             'propagate': True,
         },

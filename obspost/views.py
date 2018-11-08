@@ -74,7 +74,6 @@ def get_children_upload_specs(children):
 
 @csrf_exempt
 def odk_receive(request):
-    logger.info(request)
     def get_url(data):
         if ('picture' in data) and (data['picture'] is not None) and ('url' in data['picture']):
             return data["picture"]["url"]
@@ -120,13 +119,11 @@ def odk_receive(request):
                 else:
                     content = ''
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [starttime, learner['user'].username, submitter, picture_time,
-                                                         observation, content])
+                    append_gsheets(learner['sheet_id'], [starttime, submitter, observation, content])
             else:
                 logger.error("no picture in the post. appending without logger")
                 for learner in learner_uploads:
-                    append_gsheets(learner['sheet_id'], [starttime, learner['user'].username, submitter, picture_time,
-                                                         observation, ''])
+                    append_gsheets(learner['sheet_id'], [starttime, submitter, observation, ''])
 
             o = Observation(instance_id=instance_id,
                             submission_date=datetime.now(),
