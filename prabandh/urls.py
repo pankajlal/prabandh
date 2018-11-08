@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^observations', odk_receive),
     url(r'^odkform/', odkform),
-    url(r'^', index)
+    url(r'^$', index)
 ]
