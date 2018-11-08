@@ -43,5 +43,5 @@ class Learner(models.Model):
     
 admin.site.register(Faculty)
 admin.site.register(Sakha)
-admin.site.register(Parent)
+#admin.site.register(Parent)
 admin.site.register(Learner)
