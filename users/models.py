@@ -32,7 +32,6 @@ class Parent(models.Model):
 
 class Learner(models.Model):
     user = models.OneToOneField(User)
-    parents = models.ManyToManyField(Parent)
     sakha = models.ForeignKey(Sakha)
 
     def __str__(self):

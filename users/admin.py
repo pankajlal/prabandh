@@ -6,12 +6,11 @@ from .models import Parent
 
 @admin.register(Parent)
 class ParentAdmin(admin.ModelAdmin):
-    list_display = ('full_name','children')
 
-    def children(self, obj):
-        children = obj.learner_set.all()
-        names = [child.user.first_name + " " + child.user.last_name for child in children]
-        return ', '.join(names)
+#    def children(self, obj):
+#        children = obj.learner_set.all()
+#        names = [child.user.first_name + " " + child.user.last_name for child in children]
+#        return ', '.join(names)
 
     def full_name(self, obj):
         return obj.user.first_name + " " + obj.user.last_name
