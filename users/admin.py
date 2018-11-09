@@ -6,7 +6,7 @@ from .models import Parent
 
 @admin.register(Parent)
 class ParentAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'children')
+    list_display = ('full_name','children')
 
     def children(self, obj):
         children = obj.learner_set.all()

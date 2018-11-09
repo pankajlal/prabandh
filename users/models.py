@@ -32,7 +32,7 @@ class Parent(models.Model):
 
 class Learner(models.Model):
     user = models.OneToOneField(User)
-    parent = models.ForeignKey(Parent)
+    parents = models.ManyToManyField(Parent)
     sakha = models.ForeignKey(Sakha)
 
     def __str__(self):
@@ -43,5 +43,4 @@ class Learner(models.Model):
     
 admin.site.register(Faculty)
 admin.site.register(Sakha)
-#admin.site.register(Parent)
 admin.site.register(Learner)
