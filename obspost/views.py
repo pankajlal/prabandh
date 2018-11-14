@@ -89,6 +89,21 @@ def odk_receive(request):
     for data in odk_data["data"]:
 
         children = data.get("child")
+        if children is None:
+            #This can happen in two scenarios. Either no child was selected in the original form, or it is a child form
+            #Checking here if it is indeed a child form
+            submitter = data.get("username")
+            if submitter is not None:
+                submitter = Learner.objects.filter(user__username == submitter).first()
+                if submitter is not None:
+                    #this means it is the other kind of form
+                    children = [submitter.user.username]
+                else:
+                    return HttpResponse()
+            else:
+                #This cant happen. but if so, no big deal. just return empty http response
+                return HttpResponse()
+
         learner_uploads = get_children_upload_specs(children)
 
         #get all the folders in which this image should show
